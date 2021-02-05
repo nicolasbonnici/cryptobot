@@ -1,2 +1,2 @@
-def strat(msg):
+def run(msg):
     print(msg['b'])
