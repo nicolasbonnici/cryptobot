@@ -3,3 +3,5 @@ class Exchange:
         self.apiKey = key
         self.apiSecret = secret
         self.client = None
+        self.socketManager = None
+        self.socket = None

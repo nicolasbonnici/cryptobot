@@ -1,0 +1,4 @@
+app:
+  build: .
+  volumes:
+    - "$PWD:/usr/src/app"
