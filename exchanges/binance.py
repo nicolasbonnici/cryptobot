@@ -35,4 +35,4 @@ class Binance(exchange.Exchange):
             print(msg)
             self.close_socket()
         else:
-            self.strategy.run(msg)
+            self.strategy.run(self.symbol, msg)

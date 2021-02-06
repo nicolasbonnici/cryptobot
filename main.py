@@ -11,6 +11,7 @@ symbol = config('DEFAULT_SYMBOL')
 
 print("Connecting to {} exchange...".format(exchange_name[0].upper() + exchange_name[1:]))
 exchange = binance.Binance(config('BINANCE_API_KEY'), config('BINANCE_API_SECRET'))
+exchange.set_symbol(symbol)
 exchange.set_strategy(debug)
 
 

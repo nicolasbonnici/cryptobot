@@ -5,7 +5,11 @@ class Exchange:
         self.client = None
         self.socketManager = None
         self.socket = None
+        self.symbol = None
         self.strategy = None
+
+    def set_symbol(self, symbol: str):
+        self.symbol = symbol
 
     def set_strategy(self, strategy):
         self.strategy = strategy
