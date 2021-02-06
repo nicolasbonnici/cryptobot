@@ -4,11 +4,14 @@ import signal
 import sys
 import threading
 from exchanges import binance
+from strategies import debug
 
+exchange_name = config('EXCHANGE')
 symbol = config('DEFAULT_SYMBOL')
 
+print("Connecting to {} exchange...".format(exchange_name[0].upper() + exchange_name[1:]))
 exchange = binance.Binance(config('BINANCE_API_KEY'), config('BINANCE_API_SECRET'))
-client = exchange.get_client()
+exchange.set_strategy(debug)
 
 
 def signal_handler(signal, frame):

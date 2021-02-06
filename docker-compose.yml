@@ -1,4 +1,17 @@
-app:
-  build: .
-  volumes:
-    - "$PWD:/usr/src/app"
+version: '3.1'
+
+services:
+    cryptobot:
+      build: .
+      volumes:
+        - "$PWD:/usr/src/app"
+      depends_on:
+        - db
+    db:
+        image: postgres:12
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: cryptobot
+        ports:
+            - 15432:5432

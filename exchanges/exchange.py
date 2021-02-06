@@ -5,3 +5,7 @@ class Exchange:
         self.client = None
         self.socketManager = None
         self.socket = None
+        self.strategy = None
+
+    def set_strategy(self, strategy):
+        self.strategy = strategy
