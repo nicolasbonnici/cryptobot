@@ -32,7 +32,8 @@ class Binance(exchange.Exchange):
 
     def start_symbol_ticker_socket(self, symbol: str):
         self.socketManager = self.get_socket_manager()
-        self.socket = self.socketManager.start_symbol_ticker_socket(symbol, self.process)
+        print(symbol)
+        self.socket = self.socketManager.start_symbol_ticker_socket(symbol=symbol, callback=self.process)
 
         self.start_socket()
 
