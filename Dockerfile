@@ -7,6 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD [ "python", "./models/price.py" ]
-CMD [ "python", "./models/order.py" ]
 CMD [ "python", "./main.py" ]

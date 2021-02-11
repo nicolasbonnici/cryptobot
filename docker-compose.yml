@@ -1,15 +1,6 @@
 version: '3.8'
 
 services:
-    db:
-      image: postgres:12
-      restart: always
-      environment:
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: cryptobot
-      ports:
-          - 15432:5432
-
     cryptobot:
       build: .
       volumes:
