@@ -1,2 +1,10 @@
-def run(newPrice):
-    print(newPrice.pair, newPrice.curr)
+from datetime import datetime
+from .strategy import Strategy
+
+
+class Debug(Strategy):
+    def __init__(self, exchange, timeout=60, *args, **kwargs):
+        super().__init__(exchange, timeout)
+
+    def run(self):
+            print(datetime.now().time())

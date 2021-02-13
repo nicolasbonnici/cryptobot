@@ -1,4 +1,5 @@
 from exchanges import exchange
+from models.price import Price
 from binance.client import Client
 from binance.websockets import BinanceSocketManager
 from twisted.internet import reactor
@@ -45,3 +46,12 @@ class Binance(exchange.Exchange):
         self.socketManager.close()
         # properly terminate WebSocket
         reactor.stop()
+
+    def process(self, msg):
+        if msg['e'] == 'error':
+            print(msg)
+            self.close_socket()
+        else:
+            self.strategy.run(
+                Price(pair=self.get_symbol(), currency=self.currency, asset=self.asset,  exchange=self.name, current=msg['b'], lowest=msg['l'], highest=msg['h'])
+            )

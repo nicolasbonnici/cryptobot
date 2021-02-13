@@ -1,19 +1,20 @@
 from models import price
-
+from strategies.strategy import Strategy
 
 class Exchange:
     currency: str
     asset: str
+    strategy: Strategy
 
-    def __init__(self, key: str, secret: str):
+    def __init__(self, key: str, secret: str):        
         self.apiKey = key
         self.apiSecret = secret
         self.name = None
         self.client = None
         self.socketManager = None
         self.socket = None
-        self.currency = None
-        self.asset = None
+        self.currency = ''
+        self.asset = ''
         self.strategy = None
 
     def get_symbol(self):
@@ -25,14 +26,5 @@ class Exchange:
     def set_asset(self, symbol: str):
         self.asset = symbol
 
-    def set_strategy(self, strategy):
+    def set_strategy(self, strategy: Strategy):
         self.strategy = strategy
-
-    def process(self, msg):
-        if msg['e'] == 'error':
-            print(msg)
-            self.close_socket()
-        else:
-            self.strategy.run(
-                price.Price(pair=self.get_symbol(), currency=self.currency, asset=self.asset,  exchange=self.name, current=msg['b'], lowest=msg['l'], highest=msg['h'])
-            )
