@@ -1,5 +1,6 @@
 from datetime import datetime
 from .strategy import Strategy
+from time import sleep
 
 
 class Debug(Strategy):
@@ -7,4 +8,5 @@ class Debug(Strategy):
         super().__init__(exchange, timeout)
 
     def run(self):
-            print(datetime.now().time())
+        print(datetime.now().time())
+        sleep(10)
