@@ -3,8 +3,7 @@ from strategies.strategy import Strategy
 from models import price
 from pycoingecko import CoinGeckoAPI
 from twisted.internet import task, reactor
-from pycoingecko import CoinGeckoAPI
-import sys
+from exchanges.coin_gecko import CoinGecko
 
 class Arbitrage(Strategy):
     def __init__(self, exchange, timeout=60, *args, **kwargs):
@@ -16,5 +15,5 @@ class Arbitrage(Strategy):
     def run(self):
             coin_data = []
             for coin in self.currencies:
-                response = self.exchange.get_client().get_symbol_ticker()
+                response = self.exchange.get_client().symbol_ticker()
                 print(response)

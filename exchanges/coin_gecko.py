@@ -12,6 +12,6 @@ class CoinGecko(Exchange):
     def get_client(self):
         return self.client
 
-    def symbol_ticker(self):
+    def get_symbol_ticker(self):
         response = self.client.get_coin_ticker_by_id(self.currency)['tickers']
         return response
