@@ -49,7 +49,7 @@ class Binance(exchange.Exchange):
         response = self.client.get_asset_balance(currency)
         return response['free']
 
-    def test_order(self, order: Order):
+    def order(self, order: Order):
         return self.client.create_test_order(
             symbol=order.symbol,
             side=order.side,
