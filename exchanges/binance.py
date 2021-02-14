@@ -70,13 +70,13 @@ class Binance(exchange.Exchange):
         )
 
     def check_order(self, orderId):
-        return client.get_order(
+        return self.client.get_order(
             symbol=self.get_symbol(),
             orderId=orderId
         )
 
     def cancel_order(self, orderId):
-        return client.cancel_order(
+        return self.client.cancel_order(
             symbol=self.get_symbol(),
             orderId=orderId
         )
