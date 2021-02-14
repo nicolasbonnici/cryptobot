@@ -50,7 +50,7 @@ class Binance(exchange.Exchange):
         return response['free']
 
     def order(self, order: Order):
-        return self.client.create_test_order(
+        return self.client.create_order(
             symbol=order.symbol,
             side=order.side,
             type=order.type,
