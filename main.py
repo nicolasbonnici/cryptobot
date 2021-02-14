@@ -1,10 +1,12 @@
 #!/usr/bin/python3
-from decouple import config
 import signal
 import sys
 import threading
+
+from decouple import config
+
 from exchanges import binance, coinbase, exchange
-from strategies import debug, watcher, arbitrage
+from strategies import debug, watcher, arbitrage, test
 
 exchange_name = config('DEFAULT_EXCHANGE')
 available_exchanges = config('AVAILABLE_EXCHANGES').split(',')
@@ -49,6 +51,9 @@ if strategy == 'watcher':
 if strategy == 'arbitrage':
     exchange.set_strategy(arbitrage.Arbitrage(exchange, interval))
 
+if strategy == 'test':
+    exchange.set_strategy(test.Test(exchange, interval))
+
 # Start mode
 print("{} mode on {} symbol".format(mode, exchange.get_symbol()))
 if mode == 'trader':
@@ -69,7 +74,6 @@ else:
     print('Not supported mode.')
 
 
-
 def signal_handler(signal, frame):
     if (exchange.socket):
         print('Closing WebSocket connection...')
@@ -80,8 +84,8 @@ def signal_handler(signal, frame):
         exchange.strategy.stop()
         sys.exit(0)
 
+
 # Listen for keyboard interrupt event to close socket
 signal.signal(signal.SIGINT, signal_handler)
 forever = threading.Event()
 forever.wait()
-

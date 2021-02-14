@@ -1,6 +1,6 @@
-from exchanges.exchange import Exchange
-from requests import request
 from pycoingecko import CoinGeckoAPI
+
+from exchanges.exchange import Exchange
 
 
 class CoinGecko(Exchange):

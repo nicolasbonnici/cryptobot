@@ -1,12 +1,12 @@
-from models import price
 from strategies.strategy import Strategy
+
 
 class Exchange:
     currency: str
     asset: str
     strategy: Strategy
 
-    def __init__(self, key: str, secret: str):        
+    def __init__(self, key: str, secret: str):
         self.apiKey = key
         self.apiSecret = secret
         self.name = None

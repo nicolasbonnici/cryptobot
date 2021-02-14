@@ -1,23 +1,19 @@
-from decouple import config
-from models.price import Price
-from models.order import Order
-from datetime import datetime
+from exchanges.exchange import Exchange
 from strategies.strategy import Strategy
 
 
 class Watcher(Strategy):
-    def __init__(self, exchange, timeout=60, *args, **kwargs):
-        super().__init__(exchange, timeout)
+    def __init__(self, exchange: Exchange, timeout=60, *args, **kwargs):
+        super().__init__(exchange, timeout, *args, **kwargs)
+        self.portfolio = {'currency': self.exchange.get_asset_balance(self.exchange.currency),
+                          'asset': self.exchange.get_asset_balance(self.exchange.asset)}
 
     def run(self):
-        response = self.exchange.symbol_ticker()
-        price = Price(pair=self.exchange.get_symbol(), currency=self.exchange.currency, asset=self.exchange.asset,  exchange=self.exchange.name, current=response['price'])
-
-        # print(self.exchange.get_asset_balance(self.exchange.currency))
+        price = self.exchange.symbol_ticker()
 
         print('*******************************')
         print('Exchange: ', price.exchange)
+        print('Currency available: ', self.portfolio['currency'] + ' ' + self.exchange.currency)
+        print('Asset available: ', self.portfolio['asset'] + ' ' + self.exchange.asset)
         print('Pair: ', price.pair)
         print('Price: ', price.current)
-
-        self.buy(quantity=100, price=price.current)

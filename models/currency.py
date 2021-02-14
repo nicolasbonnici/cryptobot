@@ -1,5 +1,6 @@
 from models.model import AbstractModel
 
+
 class Currency(AbstractModel):
     name: str = ''
     symbol: str = ''

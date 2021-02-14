@@ -1,5 +1,6 @@
 from models.model import AbstractModel
 
+
 class Price(AbstractModel):
     uuid = ''
     pair: str = ''

@@ -1,11 +1,10 @@
 from datetime import datetime
 
-class AbstractModel():
-   
-    created = datetime.now()
+
+class AbstractModel:
+    created: datetime
 
     def __init__(self, **kwargs):
+        self.created = datetime.now()
         for key, value in kwargs.items():
-            print("{} is {}".format(key,value))
             setattr(self, key, value)
-
