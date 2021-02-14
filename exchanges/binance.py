@@ -2,6 +2,7 @@ from exchanges import exchange
 from models.price import Price
 from binance.client import Client
 from binance.websockets import BinanceSocketManager
+from binance.enums import *
 from twisted.internet import reactor
 
 class Binance(exchange.Exchange):
@@ -34,6 +35,44 @@ class Binance(exchange.Exchange):
         self.socket = self.socketManager.start_symbol_ticker_socket(symbol=self.get_binance_symbol(), callback=self.process)
 
         self.start_socket()
+
+    def get_account(self):
+        return self.client.get_account()
+
+    def get_asset_balance(self, currency):
+        return self.client.get_asset_balance(currency)        
+
+    def test_order(self, quantity, price, type=SIDE_BUY):
+        return self.client.create_test_order(
+            symbol=self.get_binance_symbol,
+            side=SIDE_BUY,
+            type=ORDER_TYPE_LIMIT,
+            timeInForce=TIME_IN_FORCE_GTC,
+            quantity=quantity,
+            price=price
+        )
+
+    def order(self, quantity, price, type=SIDE_BUY):
+        return self.client.create_order(
+            symbol=self.get_binance_symbol,
+            side=type,
+            type=ORDER_TYPE_LIMIT,
+            timeInForce=TIME_IN_FORCE_GTC,
+            quantity=quantity,
+            price=price
+        )        
+
+    def check_order(self, orderId):
+        return client.get_order(
+            symbol=self.get_binance_symbol,
+            orderId=orderId
+        )
+
+    def cancel_order(self, orderId):
+        return client.cancel_order(
+            symbol=self.get_binance_symbol,
+            orderId=orderId
+        )
 
     def start_socket(self):
         print('Start WebSocket connection...')
