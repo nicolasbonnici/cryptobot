@@ -1,8 +1,6 @@
-from decouple import config
-import uuid
-import datetime
+from models.model import AbstractModel
 
-class Order():
+class Order(AbstractModel):
     BUY = 'BUY'
     SELL = 'SELL'
 
@@ -14,19 +12,16 @@ class Order():
     TYPE_TAKE_PROFIT_LIMIT = 'TAKE_PROFIT_LIMIT'
     TYPE_LIMIT_MAKER = 'LIMIT_MAKER'
     
-    def __init__(self, **kwargs):
-        self.uuid = ''
-        self.side = ''
-        self.type = self.TYPE_LIMIT
-        self.symbol = ''
-        self.currency = ''
-        self.asset = ''
-        self.price = 0
-        self.quantity = 0
-        self.test = False
-        self.created = ''
+    uuid = ''
+    side: str = ''
+    type: str = TYPE_LIMIT
+    symbol: str = ''
+    currency: str = ''
+    asset: str = ''
+    price: float = 0
+    quantity: int = 0
+    test: bool = False
 
-        for key, value in kwargs.items():
-            print("{} is {}".format(key,value))
-            setattr(self, key, value)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 

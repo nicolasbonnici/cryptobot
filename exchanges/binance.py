@@ -8,7 +8,8 @@ from twisted.internet import reactor
 
 class Binance(exchange.Exchange):
     def __init__(self, key: str, secret: str):
-        exchange.Exchange.__init__(self, key, secret)
+        super().__init__(key, secret)
+
         self.client = Client(self.apiKey, self.apiSecret)
         self.name = self.__class__.__name__
 
