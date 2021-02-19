@@ -1,5 +1,4 @@
 python-binance==0.7.9
-bittrex==0.1.4
-requests==2.20.0
+requests>=2.20.0
 python-decouple==3.4
 pycoingecko==1.4
