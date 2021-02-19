@@ -17,9 +17,8 @@ interval: int = int(config('DEFAULT_TRADE_CANDLESTICK_INTERVAL'))
 currency: str = config('DEFAULT_CURRENCY')
 asset: str = config('DEFAULT_ASSET')
 
-# Parse symbol pair from first  command argument
+# Parse symbol pair from first command argument
 if len(sys.argv) > 1:
-    symbol = sys.argv[1]
     currencies = sys.argv[1].split('_')
     if len(currencies) > 1:
         currency = currencies[0]
@@ -66,7 +65,7 @@ elif mode == 'backtest':
     period_start = config('DEFAULT_PERIOD_START')
     period_end = config('DEFAULT_PERIOD_END')
 
-    print("Backtest mode on {} symbol for period from {} to {} with {} candlesticks.".format(symbol, period_start,
+    print("Backtest mode on {} symbol for period from {} to {} with {} candlesticks.".format(exchange.get_symbol(), period_start,
                                                                                              period_end, interval))
     exchange.historical_symbol_ticker_candle(period_start, period_end, interval)
 

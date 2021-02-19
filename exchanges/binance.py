@@ -33,7 +33,7 @@ class Binance(exchange.Exchange):
 
     def symbol_ticker(self):
         response = self.client.get_symbol_ticker(symbol=self.get_symbol())
-        return Price(pair=self.get_symbol(), currency=self.currency, asset=self.asset, exchange=self.name,
+        return Price(pair=self.get_symbol(), currency=self.currency.lower(), asset=self.asset.lower(), exchange=self.name.lower(),
                      current=response['price'])
 
     def start_symbol_ticker_socket(self, symbol: str):
