@@ -7,6 +7,7 @@ class Watcher(Strategy):
         super().__init__(exchange, timeout, *args, **kwargs)
 
     def run(self):
+        self.get_price()
         print('*******************************')
         print('Exchange: ', self.exchange.name)
         print('Pair: ', self.exchange.get_symbol())

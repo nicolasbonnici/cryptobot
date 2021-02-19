@@ -30,8 +30,6 @@ class Strategy(object):
         self.get_portfolio()
 
     def _run(self):
-        self.get_price()
-        self.persist_price()
         self.is_running = False
         self.start()
         self.run(*self.args, **self.kwargs)
@@ -39,7 +37,11 @@ class Strategy(object):
     def start(self):
         if not self.is_running:
             print(datetime.now())
-            self.next_call += self.interval
+            if self._timer is None:
+                self.next_call = time.time()
+            else:
+                self.next_call += self.interval
+
             self._timer = threading.Timer(self.next_call - time.time(), self._run)
             self._timer.start()
             self.is_running = True
@@ -53,18 +55,24 @@ class Strategy(object):
                           'asset': self.exchange.get_asset_balance(self.exchange.asset)}
 
     def get_price(self):
-        self.price = self.exchange.symbol_ticker()
+        try:
+            self.price = self.exchange.symbol_ticker()
+        except Exception as e:
+            pass
 
     # Persist price on internal API
     def persist_price(self):
-        url = config('API_ENDPOINT_PRICE')
-        data = self.price.__dict__
-        data['currency'] = '/api/currencies/' + data['currency']
-        data['asset'] = '/api/currencies/' + data['asset']
-        data['exchange'] = '/api/exchanges/' + data['exchange']
-        headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
-        request = requests.post(url, data=json.dumps(data), headers=headers)
-        return request.json()
+        try:
+            url = config('API_ENDPOINT_PRICE')
+            data = self.price.__dict__
+            data['currency'] = '/api/currencies/' + data['currency']
+            data['asset'] = '/api/currencies/' + data['asset']
+            data['exchange'] = '/api/exchanges/' + data['exchange']
+            headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
+            request = requests.post(url, data=json.dumps(data), headers=headers)
+            return request.json()
+        except Exception as e:
+            pass
 
     def buy(self, **kwargs):
         order = Order(
