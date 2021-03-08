@@ -1,10 +1,10 @@
 #!/usr/bin/python3
+import datetime
+from dateutil.relativedelta import relativedelta
 import signal
 import sys
 import threading
-
 from decouple import config
-
 from exchanges import binance, coinbase, exchange
 from strategies import debug, watcher, arbitrage, test
 
@@ -44,18 +44,20 @@ exchange.set_asset(asset)
 if strategy == 'debug':
     exchange.set_strategy(debug.Debug(exchange, interval))
 
-if strategy == 'watcher':
+elif strategy == 'watcher':
     exchange.set_strategy(watcher.Watcher(exchange, interval))
 
-if strategy == 'arbitrage':
+elif strategy == 'arbitrage':
     exchange.set_strategy(arbitrage.Arbitrage(exchange, interval))
 
-if strategy == 'test':
+elif strategy == 'test':
     exchange.set_strategy(test.Test(exchange, interval))
+else:
+    print('Strategy not found.')
 
 # Start mode
 print("{} mode on {} symbol".format(mode, exchange.get_symbol()))
-if mode == 'trader':
+if mode == 'trade':
     exchange.strategy.start()
 
 elif mode == 'live':
@@ -65,9 +67,29 @@ elif mode == 'backtest':
     period_start = config('DEFAULT_PERIOD_START')
     period_end = config('DEFAULT_PERIOD_END')
 
-    print("Backtest mode on {} symbol for period from {} to {} with {} candlesticks.".format(exchange.get_symbol(), period_start,
-                                                                                             period_end, interval))
-    exchange.historical_symbol_ticker_candle(period_start, period_end, interval)
+    print(
+        "Backtest mode on {} symbol for period from {} to {} with {} candlesticks.".format(
+            exchange.get_symbol(),
+            period_start,
+            period_end,
+            interval
+        )
+    )
+    exchange.backtest(period_start, period_end, interval)
+
+elif mode == 'import':
+    period_start = config('DEFAULT_PERIOD_START')
+    period_end = config('DEFAULT_PERIOD_END')
+
+    print(
+        "Import mode on {} symbol for period from {} to {} with {} candlesticks.".format(
+            exchange.get_symbol(),
+            period_start, period_end,
+            interval
+        )
+    )
+    start = datetime.datetime.now() + relativedelta(months=-6)
+    print(exchange.historical_symbol_ticker_candle(start, period_end, interval))
 
 else:
     print('Not supported mode.')

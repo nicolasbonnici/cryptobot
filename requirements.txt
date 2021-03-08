@@ -1,4 +1,4 @@
-python-binance==0.7.9
-requests>=2.20.0
-python-decouple==3.4
+requests~=2.7.0
 pycoingecko==1.4
+python-dateutil~=2.7.3
+Twisted~=20.3.0
