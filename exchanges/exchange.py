@@ -1,4 +1,5 @@
 import datetime
+from api import utils
 from abc import ABC, abstractmethod
 from twisted.internet import reactor
 from strategies.strategy import Strategy
@@ -35,12 +36,15 @@ class Exchange(ABC):
         # Iterate on candle to run strategy
         print('not implemented')
 
+    def compute_symbol_pair(self):
+        return utils.format_pair(self.currency, self.asset)
+
     # abstract methods
 
     # Override to set current exchange symbol pair notation (default with _ separator currency_asset ex: eur_btc)
     @abstractmethod
     def get_symbol(self):
-        return self.currency + "_" + self.asset
+        return self.compute_symbol_pair(self)
 
     # Override if current exchange support WebSocket connection
     @abstractmethod
@@ -109,7 +113,7 @@ class Exchange(ABC):
 
     def start_socket(self):
         print('Starting WebSocket connection...')
-        self.socketManager.start()
+        self.socketManager.periodStart()
 
     def close_socket(self):
         self.socketManager.stop_socket(self.socket)

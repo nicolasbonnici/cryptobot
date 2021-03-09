@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 import datetime
-from dateutil.relativedelta import relativedelta
 import signal
 import sys
 import threading
 from decouple import config
 from exchanges import binance, coinbase, exchange
-from strategies import debug, watcher, arbitrage, test
+from strategies import debug, logger, arbitrage, runner
+from services.importer import Importer
 
 exchange_name = config('DEFAULT_EXCHANGE')
 available_exchanges = config('AVAILABLE_EXCHANGES').split(',')
@@ -44,14 +44,14 @@ exchange.set_asset(asset)
 if strategy == 'debug':
     exchange.set_strategy(debug.Debug(exchange, interval))
 
-elif strategy == 'watcher':
-    exchange.set_strategy(watcher.Watcher(exchange, interval))
+elif strategy == 'logger':
+    exchange.set_strategy(logger.Logger(exchange, interval))
 
 elif strategy == 'arbitrage':
     exchange.set_strategy(arbitrage.Arbitrage(exchange, interval))
 
-elif strategy == 'test':
-    exchange.set_strategy(test.Test(exchange, interval))
+elif strategy == 'runner':
+    exchange.set_strategy(runner.Runner(exchange, interval))
 else:
     print('Strategy not found.')
 
@@ -84,12 +84,13 @@ elif mode == 'import':
     print(
         "Import mode on {} symbol for period from {} to {} with {} candlesticks.".format(
             exchange.get_symbol(),
-            period_start, period_end,
+            period_start,
+            period_end,
             interval
         )
     )
-    start = datetime.datetime.now() + relativedelta(months=-6)
-    print(exchange.historical_symbol_ticker_candle(start, period_end, interval))
+    importer = Importer(exchange, period_start, period_end, interval)
+    importer.process()
 
 else:
     print('Not supported mode.')

@@ -1,16 +1,12 @@
-import json
 import threading
 import time
 from datetime import datetime
-
-import requests
 from decouple import config
-
 from models.order import Order
 from models.price import Price
 
 
-class Strategy(object):
+class Strategy:
     TRADING_MODE_TEST = 'test'
     TRADING_MODE_REAL = 'real'
 
@@ -57,20 +53,6 @@ class Strategy(object):
     def get_price(self):
         try:
             self.price = self.exchange.symbol_ticker()
-        except Exception as e:
-            pass
-
-    # Persist price on internal API
-    def persist_price(self):
-        try:
-            url = config('API_ENDPOINT_PRICE')
-            data = self.price.__dict__
-            data['currency'] = '/api/currencies/' + data['currency']
-            data['asset'] = '/api/currencies/' + data['asset']
-            data['exchange'] = '/api/exchanges/' + data['exchange']
-            headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
-            request = requests.post(url, data=json.dumps(data), headers=headers)
-            return request.json()
         except Exception as e:
             pass
 

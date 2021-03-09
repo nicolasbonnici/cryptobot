@@ -1,3 +1,4 @@
+from api import utils
 from models.model import AbstractModel
 
 
@@ -7,6 +8,7 @@ class Price(AbstractModel):
     current: float = 0
     lowest: float = 0
     highest: float = 0
+    volume: float = 0
     currency: str = ''
     asset: str = ''
 
@@ -15,4 +17,4 @@ class Price(AbstractModel):
         self.pair = self.get_pair()
 
     def get_pair(self):
-        return self.currency + '_' + self.asset
+        return utils.format_pair(self.currency, self.asset)
