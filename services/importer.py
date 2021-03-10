@@ -1,6 +1,5 @@
 import sys
 from datetime import datetime
-from decouple import config
 from models.price import Price
 from api.rest import Rest
 

@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import datetime
 import signal
 import sys
 import threading
@@ -8,14 +7,14 @@ from exchanges import binance, coinbase, exchange
 from strategies import debug, logger, arbitrage, runner
 from services.importer import Importer
 
-exchange_name = config('DEFAULT_EXCHANGE')
+exchange_name = config('EXCHANGE')
 available_exchanges = config('AVAILABLE_EXCHANGES').split(',')
-mode: str = config('DEFAULT_MODE')
-strategy: str = config('DEFAULT_STRATEGY')
-trading_mode: str = config('DEFAULT_TRADING_MODE')
-interval: int = int(config('DEFAULT_TRADE_CANDLESTICK_INTERVAL'))
-currency: str = config('DEFAULT_CURRENCY')
-asset: str = config('DEFAULT_ASSET')
+mode: str = config('MODE')
+strategy: str = config('STRATEGY')
+trading_mode: str = config('TRADING_MODE')
+interval: int = int(config('CANDLE_INTERVAL'))
+currency: str = config('CURRENCY')
+asset: str = config('ASSET')
 
 # Parse symbol pair from first command argument
 if len(sys.argv) > 1:
@@ -52,6 +51,7 @@ elif strategy == 'arbitrage':
 
 elif strategy == 'runner':
     exchange.set_strategy(runner.Runner(exchange, interval))
+
 else:
     print('Strategy not found.')
 
@@ -64,11 +64,11 @@ elif mode == 'live':
     exchange.start_symbol_ticker_socket(exchange.get_symbol())
 
 elif mode == 'backtest':
-    period_start = config('DEFAULT_PERIOD_START')
-    period_end = config('DEFAULT_PERIOD_END')
+    period_start = config('PERIOD_START')
+    period_end = config('PERIOD_END')
 
     print(
-        "Backtest mode on {} symbol for period from {} to {} with {} candlesticks.".format(
+        "Backtest mode on {} symbol for period from {} to {} with {} seconds candlesticks.".format(
             exchange.get_symbol(),
             period_start,
             period_end,
@@ -78,11 +78,11 @@ elif mode == 'backtest':
     exchange.backtest(period_start, period_end, interval)
 
 elif mode == 'import':
-    period_start = config('DEFAULT_PERIOD_START')
-    period_end = config('DEFAULT_PERIOD_END')
+    period_start = config('PERIOD_START')
+    period_end = config('PERIOD_END')
 
     print(
-        "Import mode on {} symbol for period from {} to {} with {} candlesticks.".format(
+        "Import mode on {} symbol for period from {} to {} with {} seconds candlesticks.".format(
             exchange.get_symbol(),
             period_start,
             period_end,

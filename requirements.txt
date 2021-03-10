@@ -1,4 +1,3 @@
 requests~=2.7.0
-pycoingecko==1.4
-python-dateutil~=2.7.3
 Twisted~=20.3.0
+pycoingecko~=1.4.0

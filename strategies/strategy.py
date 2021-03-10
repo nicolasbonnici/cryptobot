@@ -20,7 +20,7 @@ class Strategy:
         self.is_running = False
         self.next_call = time.time()
         self.portfolio = {}
-        self.test = bool(config('DEFAULT_TRADING_MODE') != self.TRADING_MODE_REAL)
+        self.test = bool(config('TRADING_MODE') != self.TRADING_MODE_REAL)
         self.exchange = exchange
         # Load account portfolio for pair at load
         self.get_portfolio()

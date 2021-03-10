@@ -1,10 +1,11 @@
-import datetime
+from datetime import datetime
 from math import floor
 
 from binance.client import Client
 from binance.enums import *
 from binance.websockets import BinanceSocketManager
 
+from api import utils
 from exchanges import exchange
 from models.order import Order
 from models.price import Price
@@ -22,9 +23,6 @@ class Binance(exchange.Exchange):
 
     def get_symbol(self):
         return self.currency + self.asset
-
-    def get_socket_manager(self):
-        return BinanceSocketManager(self.client)
 
     def symbol_ticker(self):
         response = self.client.get_symbol_ticker(symbol=self.get_symbol())
@@ -62,7 +60,7 @@ class Binance(exchange.Exchange):
             """
             output.append(
                 Price(pair=self.compute_symbol_pair(), currency=self.currency.lower(), asset=self.asset.lower(), exchange=self.name.lower(),
-                      current=candle[1], lowest=candle[3], highest=candle[2], volume=candle[5])
+                      current=candle[1], lowest=candle[3], highest=candle[2], volume=candle[5], openAt=utils.format_date(datetime.fromtimestamp(int(candle[0])/1000)))
             )
 
         return output
@@ -102,6 +100,18 @@ class Binance(exchange.Exchange):
             symbol=self.get_symbol(),
             orderId=orderId
         )
+
+    def get_socket_manager(self):
+        return BinanceSocketManager(self.client)
+
+    def start_symbol_ticker_socket(self, symbol: str):
+        self.socketManager = self.get_socket_manager()
+        self.socket = self.socketManager.start_symbol_ticker_socket(
+            symbol=self.get_symbol(),
+            callback=self.websocket_event_handler
+        )
+
+        self.start_socket()
 
     def websocket_event_handler(self, msg):
         if msg['e'] == 'error':
