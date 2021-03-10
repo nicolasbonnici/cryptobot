@@ -5,6 +5,3 @@ services:
       build: .
       volumes:
         - "$PWD:/usr/src/app"
-      depends_on:
-        - db
-      network_mode: host
