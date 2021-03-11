@@ -16,17 +16,17 @@ interval: int = int(config('CANDLE_INTERVAL'))
 currency: str = config('CURRENCY')
 asset: str = config('ASSET')
 
+if trading_mode == 'real':
+    print("*** Caution: Trading mode activated ***")
+else:
+    print("Test mode")
+
 # Parse symbol pair from first command argument
 if len(sys.argv) > 1:
     currencies = sys.argv[1].split('_')
     if len(currencies) > 1:
         currency = currencies[0]
         asset = currencies[1]
-
-if trading_mode == 'real':
-    print("*** Caution: Trading mode activated ***")
-else:
-    print("Test mode")
 
 # Load exchange
 print("Connecting to {} exchange...".format(exchange_name[0].upper() + exchange_name[1:]))

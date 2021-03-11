@@ -22,7 +22,6 @@ class Runner(Strategy):
         self.last_price = 0
 
     def run(self):
-        self.get_price()
         print('*******************************')
         print('Exchange: ', self.exchange.name)
         print('Pair: ', self.exchange.get_symbol())

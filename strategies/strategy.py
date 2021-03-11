@@ -27,6 +27,7 @@ class Strategy(ABC):
     def _run(self):
         self.is_running = False
         self.start()
+        self.set_price(self.exchange.symbol_ticker())
         self.run(*self.args, **self.kwargs)
 
     @abstractmethod

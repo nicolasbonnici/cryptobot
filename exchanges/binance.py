@@ -118,7 +118,8 @@ class Binance(exchange.Exchange):
             print(msg)
             self.close_socket()
         else:
-            self.strategy.run(
+            self.strategy.set_price(
                 Price(pair=self.compute_symbol_pair(), currency=self.currency, asset=self.asset, exchange=self.name,
                       current=msg['b'], lowest=msg['l'], highest=msg['h'])
             )
+            self.strategy.run()

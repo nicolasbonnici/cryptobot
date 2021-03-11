@@ -1,7 +1,7 @@
 from datetime import datetime
 from time import sleep
 
-from .strategy import Strategy
+from strategy import Strategy
 
 
 class Debug(Strategy):
@@ -9,6 +9,5 @@ class Debug(Strategy):
         super().__init__(exchange, timeout, *args, **kwargs)
 
     def run(self):
-        self.get_price()
         print(datetime.now().time())
         sleep(10)
