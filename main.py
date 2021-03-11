@@ -1,10 +1,9 @@
 #!/usr/bin/python3
+import importlib
 import signal
 import sys
 import threading
 from decouple import config
-from exchanges import binance, coinbase, exchange
-from strategies import debug, logger, arbitrage, runner
 from services.importer import Importer
 
 exchange_name = config('EXCHANGE')
@@ -28,32 +27,20 @@ if trading_mode == 'real':
 else:
     print("Test mode")
 
+# Load exchange
 print("Connecting to {} exchange...".format(exchange_name[0].upper() + exchange_name[1:]))
-if exchange_name == 'binance':
-    exchange = binance.Binance(config('BINANCE_API_KEY'), config('BINANCE_API_SECRET'))
-if exchange_name == 'coinbase':
-    exchange = coinbase.Coinbase(config('COINBASE_API_KEY'), config('COINBASE_API_SECRET'))
-if exchange_name == 'coin_gekko':
-    exchange = coinbase.Coinbase(config('COINGE_API_KEY'), config('COINBASE_API_SECRET'))
+exchangeModule = importlib.import_module('exchanges.'+exchange_name, package=None)
+exchangeClass = getattr(exchangeModule, exchange_name[0].upper() + exchange_name[1:])
+exchange = exchangeClass(config(exchange_name.upper()+'_API_KEY'), config(exchange_name.upper()+'_API_SECRET'))
 
+# Load currencies
 exchange.set_currency(currency)
 exchange.set_asset(asset)
 
-# Load strategy TODO DRY with factory
-if strategy == 'debug':
-    exchange.set_strategy(debug.Debug(exchange, interval))
-
-elif strategy == 'logger':
-    exchange.set_strategy(logger.Logger(exchange, interval))
-
-elif strategy == 'arbitrage':
-    exchange.set_strategy(arbitrage.Arbitrage(exchange, interval))
-
-elif strategy == 'runner':
-    exchange.set_strategy(runner.Runner(exchange, interval))
-
-else:
-    print('Strategy not found.')
+# Load strategy
+strategyModule = importlib.import_module('strategies.'+strategy, package=None)
+strategyClass = getattr(strategyModule, strategy[0].upper() + strategy[1:])
+exchange.set_strategy(strategyClass(exchange, interval))
 
 # Start mode
 print("{} mode on {} symbol".format(mode, exchange.get_symbol()))
