@@ -41,16 +41,6 @@ class Exchange(ABC):
     def get_symbol(self):
         return self.compute_symbol_pair(self)
 
-    # Override if current exchange support WebSocket connection
-    @abstractmethod
-    def start_symbol_ticker_socket(self, symbol: str):
-        pass
-
-    # Override if current exchange support WebSocket connection
-    @abstractmethod
-    def get_socket_manager(self, purchase):
-        pass
-
     # Get current symbol ticker
     @abstractmethod
     def symbol_ticker(self):
@@ -94,11 +84,11 @@ class Exchange(ABC):
     # WebSocket related methods
 
     @abstractmethod
-    def websocket_event_handler(self, msg):
+    def get_socket_manager(self, purchase):
         pass
 
     @abstractmethod
-    def start_symbol_ticker_socket(self, symbol: str):
+    def websocket_event_handler(self, msg):
         pass
 
     def start_socket(self):
@@ -110,3 +100,7 @@ class Exchange(ABC):
         self.socketManager.close()
         # properly terminate WebSocket
         reactor.stop()
+
+    @abstractmethod
+    def start_symbol_ticker_socket(self, symbol: str):
+        pass

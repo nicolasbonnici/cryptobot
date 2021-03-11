@@ -3,6 +3,7 @@ from datetime import datetime
 from models.price import Price
 from api.rest import Rest
 
+
 class Importer:
     def __init__(self, exchange, periodStart: datetime, periodEnd=None, interval=60, *args, **kwargs):
         self.exchange = exchange
@@ -16,8 +17,8 @@ class Importer:
         for price in self.exchange.historical_symbol_ticker_candle(self.periodStart, self.periodEnd, self.interval):
             print(self.persist(price).json())
 
-        executionTime = datetime.now() - self.start
-        print('Execution time: ' + str(executionTime.total_seconds()) + ' seconds')
+        execution_time = datetime.now() - self.start
+        print('Execution time: ' + str(execution_time.total_seconds()) + ' seconds')
         sys.exit()
 
     # Persist price on internal API

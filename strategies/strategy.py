@@ -28,7 +28,7 @@ class Strategy(ABC):
         self.is_running = False
         self.start()
         self.set_price(self.exchange.symbol_ticker())
-        self.run(*self.args, **self.kwargs)
+        self.run()
 
     @abstractmethod
     def run(self):
@@ -91,7 +91,3 @@ class Strategy(ABC):
             exchangeOrder = self.exchange.order(order)
 
         print(exchangeOrder)
-
-    def datetime_normalizer(o, i):
-        if isinstance(o, datetime):
-            return o.isoformat()
