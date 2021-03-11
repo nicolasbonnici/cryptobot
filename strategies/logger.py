@@ -11,6 +11,4 @@ class Logger(Strategy):
         print('*******************************')
         print('Exchange: ', self.exchange.name)
         print('Pair: ', self.exchange.get_symbol())
-        print('Available: ', self.portfolio['currency'] + ' ' + self.exchange.currency)
-        print('Available: ', self.portfolio['asset'] + ' ' + self.exchange.asset)
         print('Price: ', self.price.current)

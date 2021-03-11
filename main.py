@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import importlib
 import signal
 import sys
@@ -33,16 +34,16 @@ exchangeModule = importlib.import_module('exchanges.'+exchange_name, package=Non
 exchangeClass = getattr(exchangeModule, exchange_name[0].upper() + exchange_name[1:])
 exchange = exchangeClass(config(exchange_name.upper()+'_API_KEY'), config(exchange_name.upper()+'_API_SECRET'))
 
-# Load currencies
-exchange.set_currency(currency)
-exchange.set_asset(asset)
-
 # Load strategy
 strategyModule = importlib.import_module('strategies.'+strategy, package=None)
 strategyClass = getattr(strategyModule, strategy[0].upper() + strategy[1:])
 exchange.set_strategy(strategyClass(exchange, interval))
 
-# Start mode
+# Load currencies
+exchange.set_currency(currency)
+exchange.set_asset(asset)
+
+# mode
 print("{} mode on {} symbol".format(mode, exchange.get_symbol()))
 if mode == 'trade':
     exchange.strategy.start()
@@ -62,7 +63,12 @@ elif mode == 'backtest':
             interval
         )
     )
-    exchange.backtest(period_start, period_end, interval)
+
+    for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
+        exchange.strategy.set_price(price)
+        exchange.strategy.run()
+
+    sys.exit()
 
 elif mode == 'import':
     period_start = config('PERIOD_START')
@@ -94,7 +100,7 @@ def signal_handler(signal, frame):
         sys.exit(0)
 
 
-# Listen for keyboard interrupt event to close socket
+# Listen for keyboard interrupt event
 signal.signal(signal.SIGINT, signal_handler)
 forever = threading.Event()
 forever.wait()

@@ -1,12 +1,13 @@
 import threading
 import time
 from datetime import datetime
+from abc import ABC, abstractmethod
 from decouple import config
 from models.order import Order
 from models.price import Price
 
 
-class Strategy:
+class Strategy(ABC):
     TRADING_MODE_TEST = 'test'
     TRADING_MODE_REAL = 'real'
 
@@ -22,13 +23,15 @@ class Strategy:
         self.portfolio = {}
         self.test = bool(config('TRADING_MODE') != self.TRADING_MODE_REAL)
         self.exchange = exchange
-        # Load account portfolio for pair at load
-        self.get_portfolio()
 
     def _run(self):
         self.is_running = False
         self.start()
         self.run(*self.args, **self.kwargs)
+
+    @abstractmethod
+    def run(self):
+        pass
 
     def start(self):
         if not self.is_running:
@@ -51,10 +54,10 @@ class Strategy:
                           'asset': self.exchange.get_asset_balance(self.exchange.asset)}
 
     def get_price(self):
-        try:
-            self.price = self.exchange.symbol_ticker()
-        except Exception as e:
-            pass
+        return self.price
+
+    def set_price(self, price: Price):
+        self.price = price
 
     def buy(self, **kwargs):
         order = Order(
