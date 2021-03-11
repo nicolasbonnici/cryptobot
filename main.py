@@ -39,6 +39,7 @@ strategyModule = importlib.import_module('strategies.'+strategy, package=None)
 strategyClass = getattr(strategyModule, strategy[0].upper() + strategy[1:])
 exchange.set_strategy(strategyClass(exchange, interval))
 
+
 # Load currencies
 exchange.set_currency(currency)
 exchange.set_asset(asset)
