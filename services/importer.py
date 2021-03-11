@@ -12,6 +12,7 @@ class Importer:
         self.periodEnd = periodEnd
         self.start = datetime.now()
         self.rest = Rest()
+        self.dataset = self.persist_dataset()
 
     def process(self):
         for price in self.exchange.historical_symbol_ticker_candle(self.periodStart, self.periodEnd, self.interval):
@@ -22,14 +23,27 @@ class Importer:
         sys.exit()
 
     # Persist price on internal API
-    def persist(self, price: Price):
+    def persist_price(self, price: Price):
         try:
             data = price.__dict__
             data['currency'] = '/api/currencies/' + data['currency']
             data['asset'] = '/api/currencies/' + data['asset']
             data['exchange'] = '/api/exchanges/' + data['exchange']
-            data['dataset'] = '/api/datasets/f06db3d5-1d29-4f2d-9b41-a785a9b429b1'
+            data['dataset'] = '/api/datasets/' + self.dataset.uuid
             response = self.rest.post('prices', data=data)
+            return response
+        except Exception as e:
+            pass
+
+    # Persist dataset on internal API
+    def persist_dataset(self):
+        try:
+            data = {'currency': '/api/currencies/' + self.exchange.currency,
+                    'asset': '/api/currencies/' + self.exchange.asset,
+                    'exchange': '/api/exchanges/' + self.exchange.name,
+                    'periodStart': self.periodStart,
+                    'periodEnd': self.periodEnd}
+            response = self.rest.post('datasets', data=data)
             return response
         except Exception as e:
             pass
