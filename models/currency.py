@@ -8,3 +8,6 @@ class Currency(AbstractModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+    def get_resource_name(self):
+        return 'currencies'
