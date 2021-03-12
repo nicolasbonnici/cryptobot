@@ -56,8 +56,6 @@ elif mode == 'backtest':
     period_start = config('PERIOD_START')
     period_end = config('PERIOD_END')
 
-
-
     print(
         "Backtest mode on {} symbol for period from {} to {} with {} seconds candlesticks.".format(
             exchange.get_symbol(),
