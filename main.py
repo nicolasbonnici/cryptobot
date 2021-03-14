@@ -5,6 +5,8 @@ import signal
 import sys
 import threading
 from decouple import config
+
+from models.dataset import Dataset
 from services.importer import Importer
 
 exchange_name = config('EXCHANGE')
@@ -65,9 +67,23 @@ elif mode == 'backtest':
         )
     )
 
-    for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
-        exchange.strategy.set_price(price)
-        exchange.strategy.run()
+    # Try to find dataset
+    dataset = Dataset().read({"exchange": exchange.name, "currency": currency.lower(), "asset": asset.lower(),
+                              "period_start": period_start, "period_end": period_end, "interval": interval})
+
+    print(dataset)
+
+    if dataset.prices:
+        print("Dataset found.")
+        for price in dataset.prices:
+            newPrice = price.populate([price])
+            exchange.strategy.set_price(newPrice)
+            exchange.strategy.run()
+    else:
+        print("Dataset not found, external API call to ."+exchange.name)
+        for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
+            exchange.strategy.set_price(price)
+            exchange.strategy.run()
 
     sys.exit()
 

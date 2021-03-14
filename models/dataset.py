@@ -1,25 +1,23 @@
+from datetime import datetime
+
 from api import utils
 from models.model import AbstractModel
-from models.currency import Currency
-from models.dataset import Dataset
 from models.exchange import Exchange
+from models.currency import Currency
 
 
-class Price(AbstractModel):
-    resource_name = 'prices'
+class Dataset(AbstractModel):
+    resource_name = 'datasets'
 
-    dataset: str = ''
+    uuid: str = ''
     pair: str = ''
     exchange: str = ''
-    current: float = 0
-    lowest: float = 0
-    highest: float = 0
-    volume: float = 0
+    periodStart: datetime
+    periodEnd: datetime
     currency: str = ''
     asset: str = ''
-    openAt: str
 
-    relations = {'exchange': Exchange, 'currency': Currency, 'asset': Currency, 'dataset': Dataset}
+    relations = {'exchange': Exchange, 'currency': Currency, 'asset': Currency}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -27,3 +25,4 @@ class Price(AbstractModel):
 
     def get_pair(self):
         return utils.format_pair(self.currency, self.asset)
+

@@ -7,6 +7,7 @@ from decouple import config
 class Rest:
     def __init__(self):
         self.api_root = config('API_ROOT')
+        self.api_uri = config('API_URI')
         self.client = requests
         self.headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
 
@@ -23,7 +24,7 @@ class Rest:
         return self.client.delete(self.build_url(resource), headers=self.build_headers(headers))
 
     def build_url(self, resource: str):
-        return self.api_root + resource
+        return self.api_root + self.api_uri + resource
 
     def build_headers(self, headers: dict):
         return {
