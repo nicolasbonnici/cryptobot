@@ -1,6 +1,7 @@
 from datetime import datetime
 from abc import ABC
 from api.rest import Rest
+from api.utils import filter_keys
 
 
 class AbstractModel(ABC):
@@ -14,19 +15,24 @@ class AbstractModel(ABC):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def filter_keys(self, data: dict):
-        return {k: v for k, v in data.items() if k not in {"rest", "relations", "resource_name"}}
-
     def serialize(self, data: dict):
-        normalized_data = self.filter_keys({**self.__dict__, **data})
+        normalized_data = filter_keys(data={**self.__dict__, **data}, keys={"rest", "relations", "resource_name"})
         # Populate IRI for object relations
         for key, value in normalized_data.items():
             if key in self.relations:
                 normalized_data[key] = '/' + self.rest.api_uri + self.relations[key].resource_name + '/' + value.lower()
-        print(normalized_data)
 
         return normalized_data
 
-    def persist(self, data: dict = {}):
-        response = self.rest.post(resource=self.resource_name, data=self.serialize(data))
-        return response.json()
+    def populate(self, data):
+        for key, value in data[0].items():
+            setattr(self, key, value)
+
+        print(self.__dict__)
+        return self
+
+    def create(self, data: dict = {}):
+        return self.populate([self.rest.post(resource=self.resource_name, data=self.serialize(data)).json()])
+
+    def read(self, data: dict):
+        return self.populate(self.rest.get(resource=self.resource_name, data=self.serialize(data)).json())
