@@ -13,6 +13,8 @@ class Order(AbstractModel):
     TYPE_TAKE_PROFIT_LIMIT = 'TAKE_PROFIT_LIMIT'
     TYPE_LIMIT_MAKER = 'LIMIT_MAKER'
 
+    resource_name = 'orders'
+
     uuid = ''
     side: str = ''
     type: str = TYPE_LIMIT
@@ -25,6 +27,3 @@ class Order(AbstractModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-    def get_resource_name(self):
-        return 'orders'

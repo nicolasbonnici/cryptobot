@@ -1,8 +1,13 @@
 from api import utils
 from models.model import AbstractModel
+from models.currency import Currency
+from models.dataset import Dataset
+from models.exchange import Exchange
 
 
 class Price(AbstractModel):
+    resource_name = 'prices'
+
     dataset: str = ''
     pair: str = ''
     exchange: str = ''
@@ -12,6 +17,9 @@ class Price(AbstractModel):
     volume: float = 0
     currency: str = ''
     asset: str = ''
+    openAt: str
+
+    relations = {'exchange': Exchange, 'currency': Currency, 'asset': Currency, 'dataset': Dataset}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -19,11 +27,3 @@ class Price(AbstractModel):
 
     def get_pair(self):
         return utils.format_pair(self.currency, self.asset)
-
-    def get_resource_name(self):
-        return 'prices'
-
-    def serialize(self, data: dict):
-        return {**self.__dict__, **data, 'currency': '/api/currencies/' + self.currency,
-                'asset': '/api/currencies/' + self.asset, 'exchange': '/api/exchanges/' + self.exchange,
-                'dataset': '/api/datasets/' + self.dataset}

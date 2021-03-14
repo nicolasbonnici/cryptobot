@@ -26,8 +26,9 @@ class Binance(exchange.Exchange):
 
     def symbol_ticker(self):
         response = self.client.get_symbol_ticker(symbol=self.get_symbol())
+        print(response)
         return Price(pair=self.get_symbol(), currency=self.currency.lower(), asset=self.asset.lower(), exchange=self.name.lower(),
-                     current=response['price'])
+                     current=response['price'], openAt=utils.format_date(datetime.now()))
 
     def symbol_ticker_candle(self, interval=Client.KLINE_INTERVAL_1MINUTE):
         return self.client.get_klines(symbol=self.get_symbol(), interval=interval)
