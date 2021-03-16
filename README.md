@@ -1,4 +1,4 @@
-# The project was written in Python 3.8
+# Crypto bot the Binance API. Use Python 3.8.
 
 ## Install and Configuration Project
 
