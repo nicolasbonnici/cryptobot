@@ -1,14 +1,18 @@
-# Crypto bot the Binance API. Use Python 3.9
+# Crypto bot
+
+- Run your own strategies
+- Trade, backtest and live test modes available
+- Easily integrate exchanges
 
 ## Install and configure project
 
-## Install dependencies
+### Install dependencies
 
 ```bash
 pip install --no-cache-dir -r requirements.txt
 ```
 
-## Usage
+### Usage
 
 Configure you .env.local file
 
