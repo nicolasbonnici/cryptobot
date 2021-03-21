@@ -74,10 +74,10 @@ elif mode == 'backtest':
 
     print(dataset)
 
-    if dataset['uuid']:
+    if dataset[0]:
         print("Dataset found.")
         price = Price()
-        for prices in price.query('get', {"dataset": dataset['uuid']}):
+        for prices in price.query('get', {"dataset": dataset[0]['uuid']}):
             newPrice = Price()
             newPrice.populate([prices])
             exchange.strategy.set_price(newPrice)

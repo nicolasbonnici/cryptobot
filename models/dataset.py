@@ -9,7 +9,6 @@ from models.currency import Currency
 class Dataset(AbstractModel):
     resource_name = 'datasets'
 
-    uuid: str = ''
     pair: str = ''
     exchange: str = ''
     periodStart: datetime

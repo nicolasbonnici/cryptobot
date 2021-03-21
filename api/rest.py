@@ -10,7 +10,7 @@ from api.utils import filter_keys
 
 # requests/API platform abstraction layer
 class Rest(ABC):
-    uuid: str = ''
+    uuid: str = None
     created: datetime = datetime.now()
     resource_name: str = ''
     relations: dict = {}
@@ -23,7 +23,8 @@ class Rest(ABC):
         http_method = getattr(self.client, method)
         try:
             response = http_method(self.build_url(self.resource_name), data=data, headers=headers)
-            return response.json()
+            data = response.json()
+            return data['hydra:member']
         except:
             print(sys.exc_info()[0])
             pass
