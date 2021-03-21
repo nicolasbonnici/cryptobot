@@ -15,8 +15,6 @@ class Order(AbstractModel):
 
     resource_name = 'orders'
 
-    uuid = ''
-    side: str = ''
     type: str = TYPE_LIMIT
     symbol: str = ''
     currency: str = ''

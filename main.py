@@ -7,6 +7,7 @@ import threading
 from decouple import config
 
 from models.dataset import Dataset
+from models.price import Price
 from services.importer import Importer
 
 exchange_name = config('EXCHANGE')
@@ -68,15 +69,17 @@ elif mode == 'backtest':
     )
 
     # Try to find dataset
-    dataset = Dataset().read({"exchange": exchange.name, "currency": currency.lower(), "asset": asset.lower(),
+    dataset = Dataset().query('get', {"exchange": exchange.name, "currency": currency.lower(), "asset": asset.lower(),
                               "period_start": period_start, "period_end": period_end, "interval": interval})
 
     print(dataset)
 
-    if dataset.prices:
+    if dataset[0]:
         print("Dataset found.")
-        for price in dataset.prices:
-            newPrice = price.populate([price])
+        price = Price()
+        for prices in price.query('get', {"dataset": dataset[0]['uuid']}):
+            newPrice = Price()
+            newPrice.populate([prices])
             exchange.strategy.set_price(newPrice)
             exchange.strategy.run()
     else:
