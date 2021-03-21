@@ -1,5 +1,7 @@
 import json
+import logging
 import sys
+from collections.abc import Iterable
 from abc import ABC
 
 import requests
@@ -8,7 +10,7 @@ from datetime import datetime
 from api.utils import filter_keys
 
 
-# requests/API platform abstraction layer
+# requests abstraction layer
 class Rest(ABC):
     uuid: str = None
     created: datetime = datetime.now()
@@ -24,9 +26,10 @@ class Rest(ABC):
         try:
             response = http_method(self.build_url(self.resource_name), data=data, headers=headers)
             data = response.json()
-            return data['hydra:member']
+            print(data)
+            return data
         except:
-            print(sys.exc_info()[0])
+            logging.error(sys.exc_info()[0])
             pass
 
     def get(self, data={}, headers={}):
@@ -45,15 +48,15 @@ class Rest(ABC):
         resource = self.post(data=self.serialize(data))
         return self.populate(data=[resource])
 
-    def read(self, data: dict={}):
+    def read(self, data: dict = {}):
         resource = self.get(data=self.serialize(data))
         return self.populate(data=[resource])
 
-    def update(self, data: dict={}):
+    def update(self, data: dict = {}):
         resource = self.put(data=self.serialize(data))
         return self.populate(data=[resource])
 
-    def delete(self, data: dict={}):
+    def delete(self, data: dict = {}):
         resource = self.delete(data=self.serialize(data))
         return self.populate(data=[resource])
 
@@ -73,14 +76,21 @@ class Rest(ABC):
         normalized_data = filter_keys(data={**self.__dict__, **data}, keys=filters)
         # Populate IRI for object relations
         for key, value in normalized_data.items():
-            if key in self.relations:
+            if key in self.relations and value:
                 normalized_data[key] = '/' + self.api_uri + self.relations[key].resource_name + '/' + value.lower()
 
         return normalized_data
 
     def populate(self, data={}) -> object:
-        for key, value in data[0].items():
-            setattr(self, key, value)
+        if data is None:
+            return
+
+        if isinstance(data, Iterable):
+            try:
+                for key, value in enumerate(data):
+                    setattr(self, key, value)
+            except TypeError:
+                pass
 
         print(self.__dict__)
         return self

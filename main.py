@@ -74,7 +74,7 @@ elif mode == 'backtest':
 
     print(dataset)
 
-    if dataset[0]:
+    if dataset and len(dataset) > 0 and dataset[0]:
         print("Dataset found.")
         price = Price()
         for prices in price.query('get', {"dataset": dataset[0]['uuid']}):
@@ -83,7 +83,7 @@ elif mode == 'backtest':
             exchange.strategy.set_price(newPrice)
             exchange.strategy.run()
     else:
-        print("Dataset not found, external API call to ."+exchange.name)
+        print("Dataset not found, external API call to "+exchange.name)
         for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
             exchange.strategy.set_price(price)
             exchange.strategy.run()
