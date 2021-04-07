@@ -2,6 +2,7 @@ from datetime import datetime
 
 from api import utils
 from exchanges.exchange import Exchange
+from models.dataset import Dataset
 from strategies.strategy import Strategy
 
 
@@ -18,6 +19,10 @@ class Runner(Strategy):
         self.waiting_order = False
         self.fulfilled_orders = []
         self.last_price = 0
+        # create a dataset for the session
+        self.dataset = Dataset().create(
+            data={'exchange': self.exchange.name.lower(), 'periodStart': datetime.now(), 'candleSize': 60,
+                  'currency': self.exchange.currency, 'asset': self.exchange.asset})
 
     def run(self):
         print('*******************************')
@@ -28,5 +33,7 @@ class Runner(Strategy):
         print('Price: ', self.price.current)
 
         # Persist price
-        response = self.price.create()
+        print(self.dataset)
+        print(self.price)
+        response = self.price.create(data={"dataset": self.dataset.uuid})
         print(response)
