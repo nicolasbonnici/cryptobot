@@ -67,7 +67,7 @@ elif mode == 'backtest':
     )
 
     # Try to find dataset
-    dataset = Dataset().query('get', {"exchange": '/api/exchanges/'+exchange.name.lower(), "currency": '/api/currency/'+currency.lower(), "asset": '/api/currency/'+asset.lower(),
+    dataset = Dataset().query('get', {"exchange": '/api/exchanges/'+exchange.name.lower(), "currency": '/api/currencies/'+currency.lower(), "asset": '/api/currencies/'+asset.lower(),
                               "period_start": period_start, "period_end": period_end, "candleSize": interval})
 
     if dataset and len(dataset) > 0:
@@ -80,9 +80,9 @@ elif mode == 'backtest':
             exchange.strategy.run()
     else:
         print("Dataset not found, external API call to " + exchange.name)
-        for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
-            exchange.strategy.set_price(price)
-            exchange.strategy.run()
+        # for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
+        #     exchange.strategy.set_price(price)
+        #     exchange.strategy.run()
 
     sys.exit()
 
