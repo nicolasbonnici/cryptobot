@@ -11,8 +11,8 @@ class Dataset(AbstractModel):
 
     pair: str = ''
     exchange: str = ''
-    periodStart: datetime
-    periodEnd: datetime
+    period_start: str = ''
+    period_end: str = ''
     currency: str = ''
     asset: str = ''
 

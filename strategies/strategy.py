@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from abc import ABC, abstractmethod
 from decouple import config
+
 from models.order import Order
 from models.price import Price
 
@@ -14,6 +15,7 @@ class Strategy(ABC):
     price: Price
 
     def __init__(self, exchange, interval=60, *args, **kwargs):
+        self.exchange = exchange
         self._timer = None
         self.interval = interval
         self.args = args
@@ -22,7 +24,6 @@ class Strategy(ABC):
         self.next_call = time.time()
         self.portfolio = {}
         self.test = bool(config('TRADING_MODE') != self.TRADING_MODE_REAL)
-        self.exchange = exchange
 
     def _run(self):
         self.is_running = False
@@ -86,8 +87,8 @@ class Strategy(ABC):
     def order(self, order: Order):
         print(order)
         if self.test:
-            exchangeOrder = self.exchange.test_order(order)
+            exchange_order = self.exchange.test_order(order)
         else:
-            exchangeOrder = self.exchange.order(order)
+            exchange_order = self.exchange.order(order)
 
-        print(exchangeOrder)
+        print(exchange_order)
