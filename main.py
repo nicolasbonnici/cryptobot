@@ -79,10 +79,10 @@ elif mode == 'backtest':
             exchange.strategy.set_price(newPrice)
             exchange.strategy.run()
     else:
-        print("Dataset not found, external API call to " + exchange.name)
-        # for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
-        #     exchange.strategy.set_price(price)
-        #     exchange.strategy.run()
+        print("Dataset not found, external API call to "+exchange.name)
+        for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
+            exchange.strategy.set_price(price)
+            exchange.strategy.run()
 
     sys.exit()
 
