@@ -27,7 +27,7 @@ class Rest(ABC):
 
         http_method = getattr(self.client, method)
         try:
-            response = http_method(self.build_url(self.resource_name), data=data, headers=headers)
+            response = http_method(self.build_url(self.resource_name, iri), data=data, headers=headers)
             data = response.json()
             if 'hydra:member' in data:
                 return data['hydra:member']
