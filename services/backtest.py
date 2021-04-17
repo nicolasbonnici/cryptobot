@@ -10,19 +10,22 @@ class Backtest:
     def __init__(self, exchange: Exchange, period_start: datetime, period_end=None, interval=60):
         self.launchedAt = datetime.now()
         # Try to find dataset
-        dataset = Dataset().query('get', {"exchange": '/api/exchanges/' + exchange.name.lower(),
-                                          "currency": '/api/currencies/' + exchange.currency.lower(),
-                                          "asset": '/api/currencies/' + exchange.asset.lower(),
-                                          "period_start": period_start, "period_end": period_end, "candleSize": interval})
-
+        dataset = Dataset().get({"exchange": exchange.name.lower(),
+                                 "currency": exchange.currency.lower(),
+                                 "asset": exchange.asset.lower(),
+                                 "periodStart": period_start, "periodEnd": period_end, "candleSize": interval})
         if dataset and len(dataset) > 0:
+            print(dataset)
             print(dataset[0])
+            print("Dataset found: " + dataset[0]['uuid'])
             price = Price()
-            for price in price.query('get', {"dataset": dataset[0]['uuid']}):
-                newPrice = Price()
-                newPrice.populate(price)
-                exchange.strategy.set_price(newPrice)
-                exchange.strategy.run()
+            for prices in price.query('get', {"dataset": dataset[0]['uuid']}):
+                for price in prices:
+                    print(price)
+                    newPrice = Price()
+                    newPrice.populate(price)
+                    exchange.strategy.set_price(newPrice)
+                    exchange.strategy.run()
         else:
             print("Dataset not found, external API call to " + exchange.name)
             for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
@@ -31,4 +34,4 @@ class Backtest:
 
         execution_time = datetime.now() - self.launchedAt
         print('Execution time: ' + str(execution_time.total_seconds()) + ' seconds')
-        sys.exit()
+        sys.exit(0)

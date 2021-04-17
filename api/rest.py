@@ -17,7 +17,10 @@ class Rest(ABC):
     api_root: str = config('API_ROOT')
     api_uri: str = config('API_URI')
     client: requests = requests
-    headers: dict = {'Content-type': 'application/json', 'Accept': 'application/json'}
+    headers: dict = {'Content-type': 'application/ld+json', 'Accept': 'application/ld+json'}
+    session = requests.Session()
+    total_items = 0
+    step = 0
 
     def query(self, method: str = 'get', data=None, headers=None, iri: str = None):
         if headers is None:
@@ -26,16 +29,33 @@ class Rest(ABC):
             data = {}
 
         http_method = getattr(self.client, method)
-        try:
-            response = http_method(self.build_url(self.resource_name, iri), data=data, headers=headers)
-            data = response.json()
-            if 'hydra:member' in data:
-                return data['hydra:member']
+        response = http_method(self.build_url(self.resource_name, iri), data=data, headers=headers).json()
+        if 'hydra:member' in response:
+            if 'hydra:view' in response and 'hydra:next' in response['hydra:view']:
+                # handle pagination
+                return self.paginate(response=response, request=data, headers=headers)
 
-            return data
-        except:
-            logging.error(sys.exc_info()[0])
-            pass
+            return response['hydra:member']
+
+        return response
+
+    def paginate(self, response, request, headers):
+        yield response['hydra:member']
+        self.total_items = response['hydra:totalItems']
+        self.step = len(response['hydra:member'])
+        for page in range(2, int(self.total_items / self.step)):
+            request['page'] = page
+            next_page = self.session.get(self.build_url(self.resource_name), params=request, headers=headers).json()
+            if 'hydra:member' in next_page:
+                if len(next_page['hydra:member']) == 0:
+                    self.total_items = 0
+                    self.step = 0
+                    self.session.close()
+                    break
+
+                yield next_page['hydra:member']
+
+        return
 
     def get(self, data=None, headers=None):
         if headers is None:
