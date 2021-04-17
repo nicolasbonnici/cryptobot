@@ -14,7 +14,6 @@ class Backtest:
                                  "currency": exchange.currency.lower(),
                                  "asset": exchange.asset.lower(),
                                  "periodStart": period_start, "periodEnd": period_end, "candleSize": interval})
-        print(dataset)
         if dataset and len(dataset) > 0:
             print(dataset)
             print(dataset[0])

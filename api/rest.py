@@ -32,7 +32,6 @@ class Rest(ABC):
         response = http_method(self.build_url(self.resource_name, iri), data=data, headers=headers).json()
         if 'hydra:member' in response:
             if 'hydra:view' in response and 'hydra:next' in response['hydra:view']:
-                print('**************pagination******************')
                 # handle pagination
                 return self.paginate(response=response, request=data, headers=headers)
 
@@ -41,12 +40,9 @@ class Rest(ABC):
         return response
 
     def paginate(self, response, request, headers):
-        print('**************** paginate ****************')
-        print(response)
         yield response['hydra:member']
         self.total_items = response['hydra:totalItems']
         self.step = len(response['hydra:member'])
-        print(self.total_items/self.step)
         for page in range(2, int(self.total_items / self.step)):
             request['page'] = page
             next_page = self.session.get(self.build_url(self.resource_name), params=request, headers=headers).json()
