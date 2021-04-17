@@ -17,7 +17,7 @@ class Rest(ABC):
     api_root: str = config('API_ROOT')
     api_uri: str = config('API_URI')
     client: requests = requests
-    headers: dict = {'Content-type': 'application/json', 'Accept': 'application/json'}
+    headers: dict = {'Content-type': 'application/ld+json', 'Accept': 'application/ld+json'}
     session = requests.Session()
     total_items = 0
     step = 0
@@ -31,7 +31,7 @@ class Rest(ABC):
         http_method = getattr(self.client, method)
         response = http_method(self.build_url(self.resource_name, iri), data=data, headers=headers).json()
         if 'hydra:member' in response:
-            if 'hydra:next' in response['hydra:view']:
+            if 'hydra:view' in response and 'hydra:next' in response['hydra:view']:
                 print('**************pagination******************')
                 # handle pagination
                 return self.paginate(response=response, request=data, headers=headers)

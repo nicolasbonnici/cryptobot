@@ -10,9 +10,9 @@ class Backtest:
     def __init__(self, exchange: Exchange, period_start: datetime, period_end=None, interval=60):
         self.launchedAt = datetime.now()
         # Try to find dataset
-        dataset = Dataset().get({"exchange": '/api/exchanges/' + exchange.name.lower(),
-                                 "currency": '/api/currencies/' + exchange.currency.lower(),
-                                 "asset": '/api/currencies/' + exchange.asset.lower(),
+        dataset = Dataset().get({"exchange": exchange.name.lower(),
+                                 "currency": exchange.currency.lower(),
+                                 "asset": exchange.asset.lower(),
                                  "periodStart": period_start, "periodEnd": period_end, "candleSize": interval})
         print(dataset)
         if dataset and len(dataset) > 0:
