@@ -6,8 +6,7 @@ import sys
 import threading
 from decouple import config
 
-from models.dataset import Dataset
-from models.price import Price
+from services.backtest import Backtest
 from services.importer import Importer
 
 exchange_name = config('EXCHANGE')
@@ -20,7 +19,7 @@ currency: str = config('CURRENCY')
 asset: str = config('ASSET')
 
 if trading_mode == 'real':
-    print("*** Caution: Trading mode activated ***")
+    print("*** Caution: Real trading mode activated ***")
 else:
     print("Test mode")
 
@@ -65,26 +64,7 @@ elif mode == 'backtest':
             interval
         )
     )
-
-    # Try to find dataset
-    dataset = Dataset().query('get', {"exchange": '/api/exchanges/'+exchange.name.lower(), "currency": '/api/currencies/'+currency.lower(), "asset": '/api/currencies/'+asset.lower(),
-                              "period_start": period_start, "period_end": period_end, "candleSize": interval})
-
-    if dataset and len(dataset) > 0:
-        print(dataset[0])
-        price = Price()
-        for price in price.query('get', {"dataset": dataset[0]['uuid']}):
-            newPrice = Price()
-            newPrice.populate(price)
-            exchange.strategy.set_price(newPrice)
-            exchange.strategy.run()
-    else:
-        print("Dataset not found, external API call to "+exchange.name)
-        for price in exchange.historical_symbol_ticker_candle(period_start, period_end, interval):
-            exchange.strategy.set_price(price)
-            exchange.strategy.run()
-
-    sys.exit()
+    Backtest(exchange, period_start, period_end, interval)
 
 elif mode == 'import':
     period_start = config('PERIOD_START')

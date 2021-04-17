@@ -9,7 +9,7 @@ class Importer:
         self.interval = interval
         self.period_start = period_start
         self.period_end = period_end
-        self.start = datetime.now()
+        self.launchedAt = datetime.now()
         self.dataset = Dataset().create(
             data={'exchange': '/api/exchanges/'+self.exchange.name.lower(), 'periodStart': self.period_start, 'periodEnd': self.period_end,
                   'candleSize': 60,
@@ -19,6 +19,6 @@ class Importer:
         for price in self.exchange.historical_symbol_ticker_candle(self.period_start, self.period_end, self.interval):
             print(price.create({'dataset': '/api/datasets/'+self.dataset.uuid}))
 
-        execution_time = datetime.now() - self.start
+        execution_time = datetime.now() - self.launchedAt
         print('Execution time: ' + str(execution_time.total_seconds()) + ' seconds')
-        sys.exit()
+        sys.exit(0)
