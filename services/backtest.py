@@ -34,4 +34,4 @@ class Backtest:
 
         execution_time = datetime.now() - self.launchedAt
         print('Execution time: ' + str(execution_time.total_seconds()) + ' seconds')
-        sys.exit()
+        sys.exit(0)
