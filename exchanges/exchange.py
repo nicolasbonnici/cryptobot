@@ -4,11 +4,11 @@ from abc import ABC, abstractmethod
 from twisted.internet import reactor
 from strategies.strategy import Strategy
 from models.order import Order
+from models.currency import Currency
+from models.pair import Pair
 
 
 class Exchange(ABC):
-    currency: str
-    asset: str
     strategy: Strategy
 
     def __init__(self, key: str, secret: str):
@@ -18,28 +18,12 @@ class Exchange(ABC):
         self.client = None
         self.socketManager = None
         self.socket = None
-        self.currency = ''
-        self.asset = ''
         self.strategy = None
-
-    def set_currency(self, symbol: str):
-        self.currency = symbol
-
-    def set_asset(self, symbol: str):
-        self.asset = symbol
 
     def set_strategy(self, strategy: Strategy):
         self.strategy = strategy
 
-    def compute_symbol_pair(self):
-        return utils.format_pair(self.currency, self.asset)
-
     # abstract methods
-
-    # Override to set current exchange symbol pair notation (default with _ separator currency_asset ex: eur_btc)
-    @abstractmethod
-    def get_symbol(self):
-        return self.compute_symbol_pair(self)
 
     # Get current symbol ticker
     @abstractmethod
@@ -53,12 +37,12 @@ class Exchange(ABC):
 
     # Get current symbol historic value
     @abstractmethod
-    def historical_symbol_ticker_candle(self, start: datetime, end=None, interval=60):
+    def historical_symbol_ticker_candle(self, pair: Pair, start: datetime, end=None, interval=60):
         pass
 
     # Get balance for a given currency
     @abstractmethod
-    def get_asset_balance(self, currency):
+    def get_asset_balance(self, currency: Currency):
         pass
 
     # Create an exchange order
@@ -102,5 +86,5 @@ class Exchange(ABC):
         reactor.stop()
 
     @abstractmethod
-    def start_symbol_ticker_socket(self, symbol: str):
+    def start_symbol_ticker_socket(self, pair: Pair):
         pass
