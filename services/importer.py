@@ -1,10 +1,11 @@
 import sys
 from datetime import datetime
 from models.dataset import Dataset
+from models.pair import Pair
 
 
 class Importer:
-    def __init__(self, exchange, period_start: datetime, period_end=None, interval=60, *args, **kwargs):
+    def __init__(self, exchange, pair: Pair, period_start: datetime, period_end=None, interval=60, *args, **kwargs):
         self.exchange = exchange
         self.interval = interval
         self.period_start = period_start
@@ -13,7 +14,7 @@ class Importer:
         self.dataset = Dataset().create(
             data={'exchange': self.exchange.name, 'periodStart': self.period_start, 'periodEnd': self.period_end,
                   'candleSize': 60,
-                  'currency': self.exchange.currency, 'asset': self.exchange.asset})
+                  'currency': pair.currency, 'asset': pair.asset})
 
     def process(self):
         for price in self.exchange.historical_symbol_ticker_candle(self.period_start, self.period_end, self.interval):
