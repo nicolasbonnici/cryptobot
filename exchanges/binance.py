@@ -22,8 +22,7 @@ class Binance(exchange.Exchange):
     def get_client(self):
         return self.client
 
-    @staticmethod
-    def get_symbol(pair: Pair):
+    def get_symbol(self, pair: Pair):
         return pair.currency + pair.asset
 
     def symbol_ticker(self, pair: Pair):
@@ -40,7 +39,7 @@ class Binance(exchange.Exchange):
                                         interval=Client.KLINE_INTERVAL_1MINUTE):
         # Convert default seconds interval to string like "1m"
         if isinstance(interval, int):
-            interval = str(floor(interval/60)) + 'm'
+            interval = str(floor(interval / 60)) + 'm'
 
         output = []
         for candle in self.client.get_historical_klines_generator(self.get_symbol(pair), interval, start, end):

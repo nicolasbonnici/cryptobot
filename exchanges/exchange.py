@@ -25,6 +25,11 @@ class Exchange(ABC):
 
     # abstract methods
 
+    # Override to set current exchange symbol pair notation (default with _ separator currency_asset ex: eur_btc)
+    @abstractmethod
+    def get_symbol(self, pair: Pair):
+        return utils.format_pair(pair.currency, pair.asset)
+
     # Get current symbol ticker
     @abstractmethod
     def symbol_ticker(self):
