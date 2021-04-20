@@ -1,4 +1,6 @@
 from models.model import AbstractModel
+from api import utils
+
 
 class Pair(AbstractModel):
     resource_name = 'pair'
@@ -10,6 +12,4 @@ class Pair(AbstractModel):
         super().__init__(**kwargs)
 
     def get_symbol(self):
-        return f'{self.currency.upper()}{self.asset.upper()}'
-
-
+        return utils.format_pair(self.currency, self.asset)

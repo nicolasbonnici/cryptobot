@@ -1,5 +1,4 @@
 import datetime
-from api import utils
 from abc import ABC, abstractmethod
 from twisted.internet import reactor
 from strategies.strategy import Strategy
@@ -28,7 +27,7 @@ class Exchange(ABC):
     # Override to set current exchange symbol pair notation (default with _ separator currency_asset ex: eur_btc)
     @abstractmethod
     def get_symbol(self, pair: Pair):
-        return utils.format_pair(pair.currency, pair.asset)
+        return pair.get_symbol()
 
     # Get current symbol ticker
     @abstractmethod
