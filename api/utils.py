@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 def format_date(date: datetime):
-    return date.strftime('%Y-%m-%d %H:%M:%S')
+    return date.strftime('%Y-%m-%d %H:%M')
 
 
 def format_pair(currency, asset):
