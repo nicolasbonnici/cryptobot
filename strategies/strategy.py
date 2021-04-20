@@ -6,6 +6,7 @@ from decouple import config
 
 from models.order import Order
 from models.price import Price
+from models.pair import Pair
 
 
 class Strategy(ABC):
@@ -14,10 +15,11 @@ class Strategy(ABC):
 
     price: Price
 
-    def __init__(self, exchange, interval=60, *args, **kwargs):
+    def __init__(self, exchange, pair: Pair, interval=60, *args, **kwargs):
         self.exchange = exchange
         self._timer = None
         self.interval = interval
+        self.pair = pair
         self.args = args
         self.kwargs = kwargs
         self.is_running = False
@@ -28,7 +30,7 @@ class Strategy(ABC):
     def _run(self):
         self.is_running = False
         self.start()
-        self.set_price(self.exchange.symbol_ticker())
+        self.set_price(self.exchange.symbol_ticker(self.pair))
         self.run()
 
     @abstractmethod
@@ -52,8 +54,8 @@ class Strategy(ABC):
         self.is_running = False
 
     def get_portfolio(self):
-        self.portfolio = {'currency': self.exchange.get_asset_balance(self.exchange.currency),
-                          'asset': self.exchange.get_asset_balance(self.exchange.asset)}
+        self.portfolio = {'currency': self.exchange.get_asset_balance(self.pair.currency),
+                          'asset': self.exchange.get_asset_balance(self.pair.asset)}
 
     def get_price(self):
         return self.price
@@ -63,9 +65,9 @@ class Strategy(ABC):
 
     def buy(self, **kwargs):
         order = Order(
-            currency=self.exchange.currency,
-            asset=self.exchange.asset,
-            symbol=self.exchange.get_symbol(),
+            currency=self.pair.currency,
+            asset=self.pair.asset,
+            symbol=self.exchange.get_symbol(self.pair),
             type=Order.TYPE_LIMIT,
             side=Order.BUY,
             test=self.test,
@@ -75,9 +77,9 @@ class Strategy(ABC):
 
     def sell(self, **kwargs):
         order = Order(
-            currency=self.exchange.currency,
-            asset=self.exchange.asset,
-            symbol=self.exchange.get_symbol(),
+            currency=self.pair.currency,
+            asset=self.pair.asset,
+            symbol=self.exchange.get_symbol(self.pair),
             side=Order.SELL,
             test=self.test,
             **kwargs
