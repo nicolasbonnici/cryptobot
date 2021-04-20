@@ -44,7 +44,7 @@ exchange = exchangeClass(config(exchange_name.upper() + '_API_KEY'), config(exch
 # Load strategy
 strategyModule = importlib.import_module('strategies.' + strategy, package=None)
 strategyClass = getattr(strategyModule, strategy[0].upper() + strategy[1:])
-exchange.set_strategy(strategyClass(exchange, interval))
+exchange.set_strategy(strategyClass(exchange, pair, interval))
 
 # mode
 print("{} mode on {} symbol".format(mode, exchange.get_symbol(pair)))
