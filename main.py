@@ -8,6 +8,7 @@ from decouple import config
 
 from models.dataset import Dataset
 from models.price import Price
+from models.pair import Pair
 from services.importer import Importer
 
 exchange_name = config('EXCHANGE')
@@ -31,15 +32,13 @@ if len(sys.argv) > 1:
         currency = currencies[0]
         asset = currencies[1]
 
+pair = Pair(asset=asset, currency=currency)
+
 # Load exchange
 print("Connecting to {} exchange...".format(exchange_name[0].upper() + exchange_name[1:]))
 exchangeModule = importlib.import_module('exchanges.' + exchange_name, package=None)
 exchangeClass = getattr(exchangeModule, exchange_name[0].upper() + exchange_name[1:])
 exchange = exchangeClass(config(exchange_name.upper() + '_API_KEY'), config(exchange_name.upper() + '_API_SECRET'))
-
-# Load currencies
-exchange.set_currency(currency)
-exchange.set_asset(asset)
 
 # Load strategy
 strategyModule = importlib.import_module('strategies.' + strategy, package=None)
@@ -47,12 +46,12 @@ strategyClass = getattr(strategyModule, strategy[0].upper() + strategy[1:])
 exchange.set_strategy(strategyClass(exchange, interval))
 
 # mode
-print("{} mode on {} symbol".format(mode, exchange.get_symbol()))
+print("{} mode on {} symbol".format(mode, exchange.get_symbol(pair)))
 if mode == 'trade':
     exchange.strategy.start()
 
 elif mode == 'live':
-    exchange.start_symbol_ticker_socket(exchange.get_symbol())
+    exchange.start_symbol_ticker_socket(pair)
 
 elif mode == 'backtest':
     period_start = config('PERIOD_START')
@@ -67,8 +66,10 @@ elif mode == 'backtest':
     )
 
     # Try to find dataset
-    dataset = Dataset().query('get', {"exchange": '/api/exchanges/'+exchange.name.lower(), "currency": '/api/currency/'+currency.lower(), "asset": '/api/currency/'+asset.lower(),
-                              "period_start": period_start, "period_end": period_end, "candleSize": interval})
+    dataset = Dataset().query('get', {"exchange": '/api/exchanges/' + exchange.name.lower(),
+                                      "currency": '/api/currency/' + pair.currency.lower(),
+                                      "asset": '/api/currency/' + pair.asset.lower(),
+                                      "period_start": period_start, "period_end": period_end, "candleSize": interval})
 
     if dataset and len(dataset) > 0:
         print(dataset[0])
@@ -92,13 +93,13 @@ elif mode == 'import':
 
     print(
         "Import mode on {} symbol for period from {} to {} with {} seconds candlesticks.".format(
-            exchange.get_symbol(),
+            exchange.get_symbol(pair),
             period_start,
             period_end,
             interval
         )
     )
-    importer = Importer(exchange, period_start, period_end, interval)
+    importer = Importer(exchange, pair, period_start, period_end, interval)
     importer.process()
 
 else:
