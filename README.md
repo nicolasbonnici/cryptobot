@@ -37,6 +37,6 @@ MODE=live ./main.py BTC_EUR
 ### Available modes
 
 - "trade" to trade on candlesticks
-- "live" to live trade throught WebSocket
+- "live" to live trade through WebSocket
 - "backtest" to test a strategy for a given symbol pair and a period
 - "import" to import dataset from exchanges for a given symbol pair and a period
